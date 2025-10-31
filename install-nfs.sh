@@ -1,4 +1,5 @@
 #! /bin/bash
+# Requires root or sudo
 
 set -e
 

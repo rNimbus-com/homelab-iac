@@ -1,0 +1,1 @@
+pve_endpoint="https://pve-host-02.local.example.com:8006"
