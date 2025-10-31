@@ -12,8 +12,8 @@ terraform {
       version = "~> 0.86"
     }
     random = {
-      source  = "opentofu/random"
-      version = "3.7.2"
+      source  = "hashicorp/random"
+      version = "~>3.7"
     }
   }
 }
