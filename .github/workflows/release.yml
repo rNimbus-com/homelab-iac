@@ -117,4 +117,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_VERSION: ${{needs.get-next-version.outputs.version}}
-        run: gh release create "${RELEASE_VERSION}" --title="${RELEASE_VERSION#v}" --generate-notes
+        run: gh release create "${RELEASE_VERSION}" --title="v${RELEASE_VERSION#v}" --generate-notes
