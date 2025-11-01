@@ -86,12 +86,16 @@ jobs:
     runs-on: ${{ inputs.runs-on }}
     needs: get-next-version
     if: ${{ success() && ( github.ref_name == inputs.release-branch )}}
+    defaults:
+      run:
+        working-directory: ./release-repo
     steps:
       - name: Checkout Code
         uses: actions/checkout@v5
         with:
           ref: '${{ github.head_ref }}'
           fetch-depth: 0
+          path: release-repo
       - uses: actions/checkout@v5
         with:
           ref: feature/setup
