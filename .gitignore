@@ -1,3 +1,17 @@
+# Ignore environment files except examples
+# .env
+# **/*.env
+**/environments/*
+!**/environments/example.*
+**/.env/*
+!**/.env/example.*
+**/env/*
+!**/env/example.*
+!example.*
+
+# Ignore VSCode
+.vscode
+
 # Local .terraform directories
 .terraform/
 
@@ -13,8 +27,9 @@ crash.*.log
 # password, private keys, and other secrets. These should not be part of version 
 # control as they are data points which are potentially sensitive and subject 
 # to change depending on the environment.
-*.tfvars
-*.tfvars.json
+# Allow tfvars. Won't be adding sensitive data.
+# *.tfvars
+# *.tfvars.json
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
@@ -35,3 +50,6 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore hcl lock files
+.terraform.lock.hcl
