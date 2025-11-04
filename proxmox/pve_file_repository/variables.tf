@@ -184,9 +184,3 @@ variable "pve_download_files" {
     error_message = "Upload timeout must be a positive number."
   }
 }
-
-# variable "sensitive_file_data" {
-#   type = list(object({
-#     env_file_name = ""
-#   }))
-# }

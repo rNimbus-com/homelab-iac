@@ -81,14 +81,10 @@ resource "proxmox_virtual_environment_file" "env_files_raw_sensitive" {
 }
 
 output "env_files" {
-  value = [for key, file in proxmox_virtual_environment_file.env_files : file]
+  value = [for key, file in proxmox_virtual_environment_file.env_files : file.id]
 }
 
-output "raw_env_files" {
-  value = [for key, file in proxmox_virtual_environment_file.env_files_raw : file]
-}
-
-output "raw_env_files_sensitive" {
-  value     = [for key, file in proxmox_virtual_environment_file.env_files_raw_sensitive : file]
-  sensitive = true
+output "raw_env_file_ids" {
+  value = concat([for key, file in proxmox_virtual_environment_file.env_files_raw : file.id],
+                 [for key, file in proxmox_virtual_environment_file.env_files_raw_sensitive : file.id])
 }
