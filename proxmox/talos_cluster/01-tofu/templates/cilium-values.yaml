@@ -28,10 +28,15 @@ l2announcements:
 externalIPs:
   enabled: true
 
-ingressController:
+gatewayAPI:
   enabled: true
-  default: true
-  loadbalancerMode: dedicated
+  enableAlpn: true
+  enableAppProtocol: true
+  
+# ingressController:
+#   enabled: true
+#   default: true
+#   loadbalancerMode: dedicated
   # service:
   #   annotations:
   #     io.cilium/lb-ipam-ips: 192.168.0.130
@@ -43,3 +48,7 @@ envoy:
     capabilities:
       keepCapNetBindService: true
       envoy: [ NET_ADMIN, PERFMON, BPF ]
+
+hubble:
+  relay:
+    enabled: true

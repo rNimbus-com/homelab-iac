@@ -57,10 +57,16 @@ variable "talos_cluster" {
     api_cert_sans             = optional(list(string), [])
     control_plane_patches     = optional(list(string), [])
     talos_ccm_enabled         = optional(bool, true)
-    talos_ccm_manifest        = optional(string, ".env/talos-ccm-manifest.yml")
+    talos_ccm_manifest        = optional(string, ".env/manifests/talos-ccm-manifest.yml")
     cilium_enabled            = optional(bool, false)
-    cilium_manifest_file      = optional(string, ".env/cilium-manifest.yml")
-
+    cilium_version            = optional(string, "v1.4.0")
+    cilium_manifest_file      = optional(string, ".env/manifests/cilium-manifest.yml")
+    cilium_ip_pool            = optional(object({
+      start_ip = optional(string, ""),
+      end_ip = optional(string, ""),
+      cidr_block = optional(string, "")
+    }))
+    cilium_tlsroute_enabled  = optional(bool, false)
   })
   description = <<-EOT
 Talos cluster configuration settings.
@@ -81,7 +87,13 @@ Talos cluster configuration settings.
 - talos_ccm_enabled: Enables installation of the node-csr-approval controller from the [Talos Cloud Controller Manager](https://github.com/siderolabs/talos-cloud-controller-manager/blob/main/README.md). Enables certificate renewal for your nodes. Required for metrics server. 
 - talos_ccm_manifest: Location of the manifest generated with the helm template command. Defaults to the name and directory location the `./templates/template-tccm.sh` script writes to.
 - cilium_enabled: Enables the replacement of the default flannel cni with cilium.
+- cilium_version: Cilium version. Defaults to v1.4.0.
 - cilium_manifest_file: The location of the cilium manifest generated with the helm template command. Defaults to the name and directory location the `./templates/template-cilium.sh` script writes to.
+- cilium_ip_pool: Defines the IP pool for IP address assignment for external load balancers / gateways.
+  - start_ip: The start of the IP address range to assign from.
+  - end_ip: The last IP address assignable.
+  - cidr_block: The cidr_block in which to assign IP addresses from.
+- cilium_tlsroute_enabled: Enables install of experimental TLSRoute CRDs.
 EOT
 }
 

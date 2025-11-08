@@ -10,7 +10,7 @@ set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 TEMPLATE_VALUES="${SCRIPT_DIR}/talos-ccm-values.yaml"
-OUPUT_MANIFEST="${SCRIPT_DIR}/../.env/talos-ccm-manifest.yml"
+OUPUT_MANIFEST="${SCRIPT_DIR}/../.env/manifests/talos-ccm-manifest.yml"
 
 echo "### Creating Talos Cloud Controller Manager (CCM) Manifest ###"
 helm template talos-cloud-controller-manager \

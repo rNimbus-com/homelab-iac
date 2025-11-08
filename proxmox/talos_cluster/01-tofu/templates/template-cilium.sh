@@ -10,24 +10,28 @@ set -e
 
 declare -a ipam_annotation=()
 if [[ -z ${1+x} ]]; then
-    echo "Warn: No ingress IP provided. Ingress IP assignment will be dynamic."
+    echo "No ingress IP provided. Ingress IP assignment will be dynamic (if ingress is enabled)."
 else
     ipam_annotation=(--set ingressController.service.annotations."io\.cilium/lb-ipam-ips"="$1")
 fi
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 TEMPLATE_VALUES="${SCRIPT_DIR}/cilium-values.yaml"
-OUPUT_MANIFEST="${SCRIPT_DIR}/../.env/cilium-manifest.yml"
+OUPUT_MANIFEST="${SCRIPT_DIR}/../.env/manifests/cilium-manifest.yml"
 
 echo "### Adding Cilium Helm Repository ###"
 helm repo add cilium https://helm.cilium.io/
 helm repo update
 
 echo "### Creating Cilium Manifest ###"
-echo helm template cilium cilium/cilium "${ipam_annotation[@]}" --namespace kube-system -f "${TEMPLATE_VALUES}"
-helm template cilium cilium/cilium \
+# --api-versions='gateway.networking.k8s.io/v1/GatewayClass' is required otherwise cilium does not create Gateway because
+# the charts check to see if the CRDs are installed prior to adding it. But, that only works for helm install/upgrade not templating
+# since templating is client side.
+# See: https://github.com/cilium/cilium/issues/33239#issuecomment-2177949109
+helm template cilium cilium/cilium --version 1.18.3 \
     "${ipam_annotation[@]}" \
     --namespace kube-system -f "${TEMPLATE_VALUES}" \
+    --api-versions='gateway.networking.k8s.io/v1/GatewayClass' \
     > "${OUPUT_MANIFEST}"
 echo ""
 echo "### Templating Complete ###"
