@@ -52,13 +52,13 @@ trap "kill $_port_forward_pid" SIGINT SIGTERM EXIT
 argocd login --skip-test-tls --plaintext --username admin --skip-test-tls --password "$ARGO_PASSWORD" localhost:8080
 
 # Create our App of Apps
-argocd app create apps \
+argocd app create bootstrap-apps \
     --dest-namespace argocd \
     --dest-server https://kubernetes.default.svc \
     --repo https://github.com/jlroskens/homelab-iac.git \
     --revision feature/talos-bootstrapping \
     --path proxmox/talos_cluster/02-argocd/bootstrap-apps
-argocd app sync apps
+argocd app sync bootstrap-apps
 
 echo "### Connection Instructions ###"
 echo "-------------------------------"
