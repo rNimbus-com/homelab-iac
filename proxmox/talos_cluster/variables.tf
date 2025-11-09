@@ -61,14 +61,14 @@ variable "talos_cluster" {
     cilium_enabled            = optional(bool, false)
     cilium_version            = optional(string, "v1.4.0")
     cilium_manifest_file      = optional(string, ".env/manifests/cilium-manifest.yml")
-    cilium_ip_pool            = optional(object({
-      start_ip = optional(string, ""),
-      end_ip = optional(string, ""),
+    cilium_ip_pool = optional(object({
+      start_ip   = optional(string, ""),
+      end_ip     = optional(string, ""),
       cidr_block = optional(string, "")
     }))
-    cilium_tlsroute_enabled  = optional(bool, false)
-    argocd_enabled           = optional(bool, false)
-    argocd_manifest_file     = optional(string, ".env/manifests/argocd-manifest.yml")
+    cilium_tlsroute_enabled = optional(bool, false)
+    argocd_enabled          = optional(bool, false)
+    argocd_manifest_file    = optional(string, ".env/manifests/argocd-manifest.yml")
   })
   description = <<-EOT
 Talos cluster configuration settings.

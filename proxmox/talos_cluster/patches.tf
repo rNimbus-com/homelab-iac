@@ -5,8 +5,8 @@ locals {
   cilium_pre_patch = var.talos_cluster.cilium_enabled == false ? [] : [yamlencode({
     machine = {
       nodeTaints = {
-          "node.cilium.io/agent-not-ready" = "true:NoExecute"
-        }
+        "node.cilium.io/agent-not-ready" = "true:NoExecute"
+      }
     }
     cluster = {
       network = {
@@ -80,7 +80,7 @@ locals {
   ]
 
   # ArgoCD Patch
-    argocd_patch = var.talos_cluster.argocd_enabled == false ? [] : [
+  argocd_patch = var.talos_cluster.argocd_enabled == false ? [] : [
     <<-EOT
       cluster:
         inlineManifests:
@@ -90,15 +90,15 @@ locals {
     EOT
   ]
   # Load Custom patches from file, if any were provided
-  custom_control_plane_patches = [ for f in var.talos_cluster.control_plane_patches : file(f) ]
+  custom_control_plane_patches = [for f in var.talos_cluster.control_plane_patches : file(f)]
 
   # Merge control pane patches into a single list.
   control_plane_patches = concat(
-      local.talos_ccm_patch,
-      local.cilium_pre_patch,
-      local.cilium_patch,
-      local.cilium_ip_annoucement,
-      local.argocd_patch,
-      local.custom_control_plane_patches
-    )
+    local.talos_ccm_patch,
+    local.cilium_pre_patch,
+    local.cilium_patch,
+    local.cilium_ip_annoucement,
+    local.argocd_patch,
+    local.custom_control_plane_patches
+  )
 }

@@ -145,27 +145,27 @@ resource "talos_machine_configuration_apply" "control_plane" {
   machine_configuration_input = data.talos_machine_configuration.control_plane.machine_configuration
   node                        = local.nodes_host_ip[each.key]
   config_patches = concat(
-      [yamlencode({
-        machine = {
-          install = {
-            disk  = var.talos_cluster.install_disk
-            image = var.talos_cluster.machine_install_image
-          }
-          kubelet = {
-            nodeIP = {
-              validSubnets = local.kubelet_nodeip_subnets
-            }
-          }
-          certSANs = local.machine_cert_sans
+    [yamlencode({
+      machine = {
+        install = {
+          disk  = var.talos_cluster.install_disk
+          image = var.talos_cluster.machine_install_image
         }
-        cluster = {
-          apiServer = {
-            certSANs = local.api_cert_sans
-          }
-          etcd = {
-            advertisedSubnets = local.etcd_subnets
+        kubelet = {
+          nodeIP = {
+            validSubnets = local.kubelet_nodeip_subnets
           }
         }
+        certSANs = local.machine_cert_sans
+      }
+      cluster = {
+        apiServer = {
+          certSANs = local.api_cert_sans
+        }
+        etcd = {
+          advertisedSubnets = local.etcd_subnets
+        }
+      }
       })
     ],
     local.control_plane_patches

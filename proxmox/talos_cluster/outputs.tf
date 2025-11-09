@@ -29,29 +29,29 @@ output "worker_config" {
 # }
 
 output "cluster_endpoint" {
-  value = var.talos_cluster.cluster_endpoint
+  value       = var.talos_cluster.cluster_endpoint
   description = "Endpoint of the cluster in the format of https://cluster.local.example.com:6443"
 }
 output "cluster_hostname" {
-  value = local.cluster_node_endpoint
+  value       = local.cluster_node_endpoint
   description = "The hostname of the cluster. Example: cluster.local.example.com."
 }
 
 output "controlplane_node_hostnames" {
-  value = [ for vm_id, hostname in local.nodes_address: {
-      vm_id = vm_id
-      hostname = hostname
-    } 
+  value = [for vm_id, hostname in local.nodes_address : {
+    vm_id    = vm_id
+    hostname = hostname
+    }
     if contains(keys(local.control_plane_vms_map), vm_id)
   ]
   description = "Hostnames of the control plane nodes."
 }
 
 output "controlplane_node_ips" {
-  value = [ for vm_id, ip in local.nodes_host_ip: {
-      vm_id = vm_id
-      ipv4_address = ip
-    } 
+  value = [for vm_id, ip in local.nodes_host_ip : {
+    vm_id        = vm_id
+    ipv4_address = ip
+    }
     if contains(keys(local.control_plane_vms_map), vm_id)
   ]
   description = "IP Addresses of the control plane nodes."
