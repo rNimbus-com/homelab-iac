@@ -1,0 +1,3 @@
+!.gitignore
+!argocd-manifest.yml
+!talos-ccm-manifest.yml
