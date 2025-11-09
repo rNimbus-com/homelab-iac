@@ -55,13 +55,23 @@ This separation provides:
 
 ```
 proxmox/talos_cluster/
-├── main.tf          # VM creation and configuration
-├── cluster.tf       # Talos cluster configuration and bootstrap
-├── variables.tf     # Variable definitions
-├── outputs.tf       # Output values including client configuration
-├── provider.tf      # Provider configurations
-└── .env/
-    └── example.tfvars  # Example configuration
+├── main.tf                    # VM creation and configuration
+├── cluster.tf                 # Talos cluster configuration and bootstrap
+├── variables.tf               # Variable definitions
+├── outputs.tf                 # Output values including client configuration
+├── provider.tf                # Provider configurations
+├── patches.tf                 # Patches for Talos configuration
+├── .env/
+│   └── example.tfvars         # Example configuration
+└── manifest-generators/
+    ├── cilium-values.yaml     # Cilium CNI configuration values
+    ├── talos-ccm-values.yaml  # Talos Cloud Controller Manager values
+    ├── kustomize-argocd.sh    # Script to generate ArgoCD manifests
+    ├── template-cilium.sh     # Script to template Cilium manifests
+    ├── template-tccm.sh       # Script to template Talos CCM manifests
+    └── argocd/
+        ├── kustomization.yaml # ArgoCD kustomization configuration
+        └── namespace.yaml     # ArgoCD namespace definition
 ```
 
 ## Key Components
