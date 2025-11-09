@@ -1,6 +1,6 @@
 # Talos Kubernetes Cluster on Proxmox
 
-This Terraform configuration creates a highly available Talos Kubernetes cluster on Proxmox VE, consisting of control plane and worker nodes with dual network interfaces for optimal performance and security.
+This tofu configuration creates a highly available Talos Kubernetes cluster on Proxmox VE, consisting of control plane and worker nodes with dual network interfaces for optimal performance and security.
 
 ## Overview
 
@@ -118,7 +118,7 @@ The module automatically configures certificates with:
 ### Provider Configuration
 
 - [`pve_endpoint`](proxmox/talos_cluster/variables.tf:2): Proxmox VE API endpoint URL
-- [`terraform_state_path`](proxmox/talos_cluster/variables.tf:7): Local path for Terraform state file
+- [`tofu_state_path`](proxmox/talos_cluster/variables.tf:7): Local path for tofu state file
 
 ### ISO Configuration
 
@@ -198,8 +198,8 @@ Edit the configuration file with your specific:
 ### 2. Initialize and Apply
 
 ```bash
-terraform init
-terraform apply -var-file=.env/your-cluster.tfvars
+tofu init
+tofu apply -var-file=.env/your-cluster.tfvars
 ```
 
 ### 3. Configure Talos Client
@@ -211,7 +211,7 @@ After successful deployment, configure your Talos client:
 mkdir -p ~/.talos
 
 # Extract the client configuration
-terraform output -raw talos_client_config > ~/.talos/config
+tofu output -raw talos_client_config > ~/.talos/config
 
 # Set environment variable
 export TALOSCONFIG=~/.talos/config
@@ -223,8 +223,132 @@ talosctl kubeconfig --nodes <bootstrap_endpoint>
 Or use the provided one-liner from the output:
 
 ```bash
-mkdir -p ~/.talos && terraform output -raw talos_client_config > ~/.talos/config && export TALOSCONFIG=~/.talos/config && talosctl kubeconfig --nodes <bootstrap_endpoint>
+mkdir -p ~/.talos && tofu output -raw talos_client_config > ~/.talos/config && export TALOSCONFIG=~/.talos/config && talosctl kubeconfig --nodes <bootstrap_endpoint>
 ```
+
+## Manifest Generation
+
+The module includes several manifest generators in the [`manifest-generators`](proxmox/talos_cluster/manifest-generators) directory that allow you to generate Kubernetes manifests for additional components. These manifests can be automatically installed during cluster bootstrap by enabling the appropriate settings in your tfvars file.
+
+### Available Manifest Generators
+
+#### 1. Cilium CNI Manifest
+
+Generate a Cilium CNI manifest to replace the default Flannel CNI:
+
+```bash
+# Navigate to the manifest generators directory
+cd proxmox/talos_cluster/manifest-generators
+
+# Generate the Cilium manifest
+./template-cilium.sh
+
+# Optionally minify the output (removes comments)
+./template-cilium.sh minify
+```
+
+This creates a manifest at `.env/manifests/cilium-manifest.yml` using the configuration from [`cilium-values.yaml`](proxmox/talos_cluster/manifest-generators/cilium-values.yaml).
+
+To enable Cilium installation, add to your tfvars file:
+
+```hcl
+talos_cluster = {
+  # ... other configuration
+  cilium_enabled = true
+  cilium_manifest_file = ".env/manifests/cilium-manifest.yml"
+}
+```
+
+#### 2. Talos Cloud Controller Manager (CCM) Manifest
+
+Generate a Talos Cloud Controller Manager manifest for node certificate management:
+
+```bash
+# Navigate to the manifest generators directory
+cd proxmox/talos_cluster/manifest-generators
+
+# Generate the Talos CCM manifest
+./template-tccm.sh
+
+# Optionally minify the output (removes comments)
+./template-tccm.sh minify
+```
+
+This creates a manifest at `.env/manifests/talos-ccm-manifest.yml` using the configuration from [`talos-ccm-values.yaml`](proxmox/talos_cluster/manifest-generators/talos-ccm-values.yaml).
+
+To enable Talos CCM installation, add to your tfvars file:
+
+```hcl
+talos_cluster = {
+  # ... other configuration
+  talos_ccm_enabled = true
+  talos_ccm_manifest = ".env/manifests/talos-ccm-manifest.yml"
+}
+```
+
+#### 3. ArgoCD Manifest
+
+Generate an ArgoCD manifest for GitOps deployments:
+
+```bash
+# Navigate to the manifest generators directory
+cd proxmox/talos_cluster/manifest-generators
+
+# Generate the ArgoCD manifest
+./kustomize-argocd.sh
+
+# Optionally minify the output (removes comments)
+./kustomize-argocd.sh minify
+```
+
+This creates a manifest at `.env/manifests/argocd-manifest.yml` using the kustomization configuration from the [`argocd`](proxmox/talos_cluster/manifest-generators/argocd) directory.
+
+To enable ArgoCD installation, add to your tfvars file:
+
+```hcl
+talos_cluster = {
+  # ... other configuration
+  argocd_enabled = true
+  argocd_manifest_file = ".env/manifests/argocd-manifest.yml"
+}
+```
+
+### Complete Workflow Example
+
+Here's a complete example of setting up a cluster with Cilium and ArgoCD:
+
+```bash
+# 1. Generate the manifests
+cd proxmox/talos_cluster/manifest-generators
+./template-cilium.sh
+./kustomize-argocd.sh
+
+# 2. Configure your tfvars file to enable these components
+cat > ../.env/my-cluster.tfvars << EOF
+# ... other configuration
+talos_cluster = {
+  # ... other configuration
+  cilium_enabled = true
+  argocd_enabled = true
+  talos_ccm_enabled = true  # Recommended for most clusters
+}
+EOF
+
+# 3. Apply the tofu configuration
+cd ..
+tofu init
+tofu apply -var-file=.env/my-cluster.tfvars
+```
+
+### Customizing Manifests
+
+You can customize the generated manifests by modifying the values files:
+
+- [`cilium-values.yaml`](proxmox/talos_cluster/manifest-generators/cilium-values.yaml): Configure Cilium settings like IPAM, kube-proxy replacement, and Gateway API
+- [`talos-ccm-values.yaml`](proxmox/talos_cluster/manifest-generators/talos-ccm-values.yaml): Configure Talos CCM settings and enabled controllers
+- [`argocd/kustomization.yaml`](proxmox/talos_cluster/manifest-generators/argocd/kustomization.yaml): Configure ArgoCD resources and patches
+
+After making changes, regenerate the manifests and reapply your tofu configuration.
 
 ## Outputs
 
@@ -283,7 +407,7 @@ This allows the module to properly manage workers that have already joined the c
 
 ## Requirements
 
-- Terraform ~> 1.6
+- tofu ~> 1.6
 - Proxmox VE with API access
 - Talos ISO uploaded to Proxmox datastore
 - Proper network bridges configured (vmbr0, vmbr1)
