@@ -22,7 +22,7 @@ module "control_plane_vms" {
 
   cpu = {
     type      = "host"
-    cores     = var.cpu_cores
+    cores     = each.value.cpu_cores
     cpu_units = 900
   }
 
@@ -43,7 +43,7 @@ module "control_plane_vms" {
   }
 
   memory = {
-    dedicated_mb      = var.memory_mb
+    dedicated_mb      = each.value.memory_mb
     balooning_enabled = true
   }
 
@@ -84,7 +84,7 @@ module "worker_vms" {
 
   cpu = {
     type      = "host"
-    cores     = var.cpu_cores
+    cores     = each.value.cpu_cores
     cpu_units = 800
   }
 
@@ -105,7 +105,7 @@ module "worker_vms" {
   }
 
   memory = {
-    dedicated_mb      = var.memory_mb
+    dedicated_mb      = each.value.memory_mb
     balooning_enabled = true
   }
 
