@@ -15,7 +15,7 @@ done
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "${SCRIPT_DIR}"
-KUSTOMIZE_DIR="${SCRIPT_DIR}/argocd"
+KUSTOMIZE_DIR="${SCRIPT_DIR}/kustomizations/argocd"
 OUTPUT_MANIFEST="${SCRIPT_DIR}/../.env/manifests/argocd-manifest.yml"
 
 echo "### Kustomizing ArgoCD Manifest ###"

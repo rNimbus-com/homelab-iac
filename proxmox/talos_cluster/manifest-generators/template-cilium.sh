@@ -24,7 +24,7 @@ for arg in "$@"; do
 done
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-TEMPLATE_VALUES="${SCRIPT_DIR}/cilium-values.yaml"
+TEMPLATE_VALUES="${SCRIPT_DIR}/values/cilium-values.yaml"
 OUTPUT_MANIFEST="${SCRIPT_DIR}/../.env/manifests/cilium-manifest.yml"
 
 echo "### Adding Cilium Helm Repository ###"
