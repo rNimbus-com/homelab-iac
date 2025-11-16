@@ -1,0 +1,17 @@
+image:
+  tag: 8.2.3-alpine
+auth: true
+persistentVolume:
+  enabled: false
+exporter:
+  enabled: false
+redis:
+  masterGroupName: rnimbus
+  config:
+    save: '""'
+haproxy:
+  enabled: true
+  metrics:
+    enabled: true
+  containerSecurityContext:
+    readOnlyRootFilesystem: true

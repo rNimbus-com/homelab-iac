@@ -16,14 +16,10 @@ for arg in "$@"; do
 done
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-TEMPLATE_VALUES="${SCRIPT_DIR}/talos-ccm-values.yaml"
+TEMPLATE_VALUES="${SCRIPT_DIR}/values/talos-ccm-values.yaml"
 OUTPUT_MANIFEST="${SCRIPT_DIR}/../.env/manifests/talos-ccm-manifest.yml"
 
 echo "### Creating Talos Cloud Controller Manager (CCM) Manifest ###"
-helm template talos-cloud-controller-manager \
-    oci://ghcr.io/siderolabs/charts/talos-cloud-controller-manager \
-    --namespace kube-system -f "${TEMPLATE_VALUES}" \
-    > "${OUTPUT_MANIFEST}"
 
 manifest=$(helm template talos-cloud-controller-manager \
     oci://ghcr.io/siderolabs/charts/talos-cloud-controller-manager \
