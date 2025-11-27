@@ -190,22 +190,23 @@ resource "proxmox_virtual_environment_vm" "this" {
   dynamic "hostpci" {
     for_each = { for device in var.hostpci : device.device => device }
     content {
-      device   = each.value.device
-      mapping  = each.value.mapping
-      mdev     = each.value.mdev
-      pcie     = each.value.pcie
-      rombar   = each.value.rombar
-      rom_file = each.value.rom_file
-      xvga     = each.value.xvga
+      device   = hostpci.value.device
+      id       = hostpci.value.id
+      mapping  = hostpci.value.mapping
+      mdev     = hostpci.value.mdev
+      pcie     = hostpci.value.pcie
+      rombar   = hostpci.value.rombar
+      rom_file = hostpci.value.rom_file
+      xvga     = hostpci.value.xvga
     }
   }
 
   dynamic "usb" {
     for_each = { for device in var.usb : coalesce(device.host, device.mapping) => device }
     content {
-      host    = each.value.host
-      mapping = each.value.mapping
-      usb3    = each.value.usb3
+      host    = usb.value.host
+      mapping = usb.value.mapping
+      usb3    = usb.value.usb3
     }
   }
 

@@ -34,6 +34,8 @@ module "control_plane_vms" {
       interface    = "virtio0"
       datastore_id = "local-cluster-zfs"
       size         = 100
+      datastore_id = each.value.datastore_id
+      size         = each.value.disk_size
     }
   ]
 
@@ -94,11 +96,17 @@ module "worker_vms" {
   disks = [
     {
       interface    = "virtio0"
-      datastore_id = "local-cluster-zfs"
-      size         = 100
+      datastore_id = each.value.datastore_id
+      size         = each.value.disk_size
     }
   ]
-
+  hostpci = [{
+          device = "hostpci0"
+          id     = "0000:65:00.0"
+          pcie   = false
+          rombar = true
+          xvga   = true
+        }]
   cdrom = {
     file_id   = data.proxmox_virtual_environment_file.iso.id
     interface = "ide0"

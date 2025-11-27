@@ -115,6 +115,8 @@ variable "control_plane_vms" {
     node_name   = string
     cpu_cores   = optional(number, 2)
     memory_mb   = optional(number, 2048)
+    datastore_id = optional(string, "local-cluster-zfs")
+    disk_size   = optional(number, 100)
     description = optional(string, "Talos control plane node")
 
     cloud_init_ip_config = list(object({
@@ -139,6 +141,8 @@ Each control plane VM object supports the following parameters:
 - node_name: (Required) The name of the Proxmox node to assign the virtual machine to.
 - cpu_cores: (Optional) The amount of vCPU / cores to assign to the the control plane VM.
 - memory_mb: (Optional) The amount of memory (in MB) to assign to the the control plane VM.
+- datastore_id: (Optional) The ID of the datastore used for the primary disk.
+- disk_size: (Optional) Size of the worker VM's primary disk in GB.
 - description: (Optional) Description for the virtual machine. Defaults to "Talos control plane node".
 - cloud_init_ip_config: (Required) List of IP configurations for cloud-init network setup.
   - ipv4: (Optional) IPv4 configuration object.
@@ -160,6 +164,8 @@ variable "worker_vms" {
     node_name   = string
     cpu_cores   = optional(number, 2)
     memory_mb   = optional(number, 2048)
+    datastore_id = optional(string, "local-cluster-zfs")
+    disk_size   = optional(number, 100)
     description = optional(string, "Talos worker")
 
     cloud_init_ip_config = list(object({
@@ -184,6 +190,8 @@ Each worker VM object supports the following parameters:
 - node_name: (Required) The name of the Proxmox node to assign the virtual machine to.
 - cpu_cores: (Optional) The amount of vCPU / cores to assign to the the worker VM.
 - memory_mb: (Optional) The amount of memory (in MB) to assign to the the worker VM.
+- datastore_id: (Optional) The ID of the datastore used for the primary disk.
+- disk_size: (Optional) Size of the worker VM's primary disk in GB.
 - description: (Optional) Description for the virtual machine. Defaults to "Talos worker".
 - cloud_init_ip_config: (Required) List of IP configurations for cloud-init network setup.
   - ipv4: (Optional) IPv4 configuration object.

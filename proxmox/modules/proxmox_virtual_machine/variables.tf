@@ -620,6 +620,7 @@ variable "hostpci" {
   Attributes:
     - device   (Required) The PCI device name for Proxmox, in the form "hostpciX" where X is 0–15.
     - mapping  (Optional) The resource mapping name of the device (e.g., "gpu"). Use either this or id.
+    - id       (Optional) (Optional) The PCI device ID. This parameter is not compatible with api_token and requires the root username and password configured in the proxmox provider. Use either this or mapping.
     - mdev     (Optional) The mediated device ID to use.
     - pcie     (Optional) Whether to use a PCIe port (true) or PCI port (false). PCIe is available only for q35 machine types (defaults to false).
     - rombar   (Optional) Whether to make the firmware ROM visible to the VM (defaults to true).
@@ -630,7 +631,7 @@ variable "hostpci" {
   type = list(object({
     device = string
     # - id       (Optional) The PCI device ID. Not compatible with api_token; requires root credentials in the Proxmox provider. Use either this or mapping.
-    # id       = optional(string)
+    id       = optional(string)
     mapping  = optional(string)
     mdev     = optional(string)
     pcie     = optional(bool, false)
@@ -651,7 +652,8 @@ variable "hostpci" {
   validation {
     condition = alltrue([
       for pci in var.hostpci : (
-        !(contains(keys(pci), "id") && contains(keys(pci), "mapping"))
+        !(can(coalesce(pci.id, null)) && can(coalesce(pci.mapping, null)))
+        # !(contains(keys(pci), "id") && contains(keys(pci), "mapping"))
       )
     ])
     error_message = "Each hostpci object must use either 'id' or 'mapping', but not both."
