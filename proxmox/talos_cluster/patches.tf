@@ -63,7 +63,7 @@ locals {
         kubelet:
           extraArgs:
             rotate-server-certificates: true
-            # cloud-provider: external
+            cloud-provider: external
         features:
           kubernetesTalosAPIAccess:
             enabled: true

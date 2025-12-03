@@ -5,7 +5,7 @@ daemonSet:
 
 enabledControllers:
   - node-csr-approval
-  # Only CSR Approval enabled. Other options
-  # - cloud-node
-  # - cloud-node-lifecycle
-  # - node-ipam-controller
+  - cloud-node
+  # Only CSR Approval and cloud-node enabled.
+  # - cloud-node-lifecycle  # Only useful for GKE
+  # - node-ipam-controller  # Handled by cilium
