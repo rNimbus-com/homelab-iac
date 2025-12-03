@@ -6,17 +6,17 @@ data "proxmox_virtual_environment_file" "image" {
 }
 
 data "proxmox_virtual_environment_file" "vendor" {
-  node_name = var.node_name
+  node_name    = var.node_name
   datastore_id = "shared-vz"
   content_type = "snippets"
-  file_name = "vendor-debian-trixie-genericloud-docker.yml"
+  file_name    = "vendor-debian-trixie-genericloud-docker.yml"
 }
 
 data "proxmox_virtual_environment_file" "user_data" {
-  node_name = var.node_name
+  node_name    = var.node_name
   datastore_id = "shared-vz"
   content_type = "snippets"
-  file_name = "user-data-debian-docker.yml"
+  file_name    = "user-data-debian-docker.yml"
 }
 
 module "bootstrap_vm" {
@@ -71,11 +71,11 @@ module "bootstrap_vm" {
     }
   ]
   cloud_init = {
-    datastore_id = "local-cluster-zfs"
-    interface    = "scsi1"
-    ip_config    = var.cloud_init_ip_config
-    dns          = var.cloud_init_dns
+    datastore_id        = "local-cluster-zfs"
+    interface           = "scsi1"
+    ip_config           = var.cloud_init_ip_config
+    dns                 = var.cloud_init_dns
     vendor_data_file_id = data.proxmox_virtual_environment_file.vendor.id
-    user_data_file_id = data.proxmox_virtual_environment_file.user_data.id
+    user_data_file_id   = data.proxmox_virtual_environment_file.user_data.id
   }
 }

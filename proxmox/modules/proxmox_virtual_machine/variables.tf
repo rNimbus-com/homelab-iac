@@ -896,3 +896,30 @@ variable "tags" {
   type    = list(string)
   default = []
 }
+
+variable "smbios" {
+  description = <<-EOT
+  (Optional) The SMBIOS (type1) settings for the VM.
+
+  Attributes:
+    - family      (Optional) The family string.
+    - manufacturer (Optional) The manufacturer.
+    - product     (Optional) The product ID.
+    - serial      (Optional) The serial number.
+    - sku         (Optional) The SKU number.
+    - uuid        (Optional) The UUID (defaults to randomly generated UUID).
+    - version     (Optional) The version.
+  EOT
+
+  type = object({
+    family       = optional(string)
+    manufacturer = optional(string)
+    product      = optional(string)
+    serial       = optional(string)
+    sku          = optional(string)
+    uuid         = optional(string)
+    version      = optional(string)
+  })
+
+  default = null
+}

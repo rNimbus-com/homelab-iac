@@ -69,14 +69,14 @@ variable "description" {
 
 variable "vendor_data_snippet_name" {
   description = "Name of the vendor snippet uploaded to proxmox for cloud-init."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "user_data_snippet_name" {
   description = "Name of the user data snippet uploaded to proxmox for cloud-init."
-  type = string
-  default = null
+  type        = string
+  default     = null
 }
 
 variable "cloud_init_ip_config" {
@@ -110,5 +110,5 @@ variable "cloud_init_dns" {
       - domain            (Optional) DNS search domain.
       - servers           (Optional) List of DNS servers.
   EOT
-  default = null
+  default     = null
 }
