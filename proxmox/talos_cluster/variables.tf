@@ -110,14 +110,14 @@ variable "joined_worker_ids" {
 # Variables for control plane VM configuration
 variable "control_plane_vms" {
   type = list(object({
-    vm_name     = string
-    vm_id       = number
-    node_name   = string
-    cpu_cores   = optional(number, 2)
-    memory_mb   = optional(number, 2048)
+    vm_name      = string
+    vm_id        = number
+    node_name    = string
+    cpu_cores    = optional(number, 2)
+    memory_mb    = optional(number, 2048)
     datastore_id = optional(string, "local-cluster-zfs")
-    disk_size   = optional(number, 100)
-    description = optional(string, "Talos control plane node")
+    disk_size    = optional(number, 100)
+    description  = optional(string, "Talos control plane node")
 
     cloud_init_ip_config = list(object({
       ipv4 = optional(object({
@@ -129,6 +129,14 @@ variable "control_plane_vms" {
         gateway = optional(string)
       }))
     }))
+
+    hostpci = optional(list(object({
+      device = string
+      id     = string
+      pcie   = optional(bool, false)
+      rombar = optional(bool, true)
+      xvga   = optional(bool, false)
+    })), [])
 
   }))
   description = <<-EOT
@@ -151,6 +159,12 @@ Each control plane VM object supports the following parameters:
   - ipv6: (Optional) IPv6 configuration object.
     - address: (Required) IPv6 address in CIDR notation (e.g., "2001:db8::10/64") or "dhcp" for autodiscovery.
     - gateway: (Optional) IPv6 gateway address. Omit if address is set to "dhcp".
+- hostpci: (Optional) List of host PCI device configurations for hardware passthrough.
+  - device: (Required) The device identifier (e.g., "hostpci0").
+  - id: (Required) The PCI device ID (e.g., "0000:65:00.0").
+  - pcie: (Optional) Whether to use PCIe mode. Defaults to false.
+  - rombar: (Optional) Whether to expose the ROM bar. Defaults to true.
+  - xvga: (Optional) Whether to use XVGA. Defaults to false.
 
 Note: At least one control plane VM is required for a functional cluster. For high availability, configure 3 or more control plane VMs.
 EOT
@@ -159,14 +173,14 @@ EOT
 # Variables for worker VM configuration
 variable "worker_vms" {
   type = list(object({
-    vm_name     = string
-    vm_id       = number
-    node_name   = string
-    cpu_cores   = optional(number, 2)
-    memory_mb   = optional(number, 2048)
+    vm_name      = string
+    vm_id        = number
+    node_name    = string
+    cpu_cores    = optional(number, 2)
+    memory_mb    = optional(number, 2048)
     datastore_id = optional(string, "local-cluster-zfs")
-    disk_size   = optional(number, 100)
-    description = optional(string, "Talos worker")
+    disk_size    = optional(number, 100)
+    description  = optional(string, "Talos worker")
 
     cloud_init_ip_config = list(object({
       ipv4 = optional(object({
@@ -178,6 +192,14 @@ variable "worker_vms" {
         gateway = optional(string)
       }))
     }))
+
+    hostpci = optional(list(object({
+      device = string
+      id     = string
+      pcie   = optional(bool, false)
+      rombar = optional(bool, true)
+      xvga   = optional(bool, false)
+    })), [])
 
   }))
   description = <<-EOT
@@ -200,6 +222,12 @@ Each worker VM object supports the following parameters:
   - ipv6: (Optional) IPv6 configuration object.
     - address: (Required) IPv6 address in CIDR notation (e.g., "2001:db8::20/64") or "dhcp" for autodiscovery.
     - gateway: (Optional) IPv6 gateway address. Omit if address is set to "dhcp".
+- hostpci: (Optional) List of host PCI device configurations for hardware passthrough.
+  - device: (Required) The device identifier (e.g., "hostpci0").
+  - id: (Required) The PCI device ID (e.g., "0000:65:00.0").
+  - pcie: (Optional) Whether to use PCIe mode. Defaults to false.
+  - rombar: (Optional) Whether to expose the ROM bar. Defaults to true.
+  - xvga: (Optional) Whether to use XVGA. Defaults to false.
 
 Note: Worker VMs are optional but recommended for running container workloads. They can be scaled horizontally to handle increased workload demands.
 EOT

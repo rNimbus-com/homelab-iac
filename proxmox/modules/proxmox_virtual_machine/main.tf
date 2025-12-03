@@ -164,6 +164,19 @@ resource "proxmox_virtual_environment_vm" "this" {
 
   # Device Configuration (Display, TPM, PCI, USB)
 
+  dynamic "smbios" {
+    for_each = var.smbios == null ? [] : [1]
+    content {
+      family       = var.smbios.family
+      manufacturer = var.smbios.manufacturer
+      product      = var.smbios.product
+      serial       = var.smbios.serial
+      sku          = var.smbios.sku
+      uuid         = var.smbios.uuid
+      version      = var.smbios.version
+    }
+  }
+
   dynamic "serial_device" {
     for_each = { for d in var.serial_devices : d.device => d }
     content {

@@ -8,6 +8,7 @@ data "proxmox_virtual_environment_file" "iso" {
 module "control_plane_vms" {
   for_each    = { for vm in var.control_plane_vms : vm.vm_id => vm }
   source      = "github.com/rNimbus-com/homelab-iac/proxmox/modules/proxmox_virtual_machine?ref=v0"
+  # source      = "../../proxmox/modules/proxmox_virtual_machine"
   vm_name     = each.value.vm_name
   vm_id       = each.value.vm_id
   node_name   = each.value.node_name
@@ -19,6 +20,10 @@ module "control_plane_vms" {
   start_on_host_boot    = true
   reboot_after_creation = false
   reboot_after_update   = false
+
+  smbios = {
+    serial = "h=${each.value.vm_name};i=${each.value.vm_id}"
+  }
 
   cpu = {
     type      = "host"
@@ -61,6 +66,9 @@ module "control_plane_vms" {
       bridge = "vmbr1"
     }
   ]
+
+  hostpci = each.value.hostpci
+
   cloud_init = {
     datastore_id = "local-cluster-zfs"
     interface    = "scsi1"
@@ -84,6 +92,10 @@ module "worker_vms" {
   reboot_after_creation = false
   reboot_after_update   = false
 
+  smbios = {
+    serial = "h=${each.value.vm_name};i=${each.value.vm_id}"
+  }
+
   cpu = {
     type      = "host"
     cores     = each.value.cpu_cores
@@ -100,13 +112,9 @@ module "worker_vms" {
       size         = each.value.disk_size
     }
   ]
-  hostpci = [{
-          device = "hostpci0"
-          id     = "0000:65:00.0"
-          pcie   = false
-          rombar = true
-          xvga   = true
-        }]
+
+  hostpci = each.value.hostpci
+
   cdrom = {
     file_id   = data.proxmox_virtual_environment_file.iso.id
     interface = "ide0"

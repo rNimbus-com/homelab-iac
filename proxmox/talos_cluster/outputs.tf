@@ -80,14 +80,14 @@ output "kubeconfig" {
 }
 
 output "kubeconfig_client_certificate" {
-  value     = talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_certificate
+  value = talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_certificate
 }
 output "kubeconfig_client_key" {
   value     = talos_cluster_kubeconfig.this.kubernetes_client_configuration.client_key
   sensitive = true
 }
 output "kubeconfig_ca_certificate" {
-  value     = talos_cluster_kubeconfig.this.kubernetes_client_configuration.ca_certificate
+  value = talos_cluster_kubeconfig.this.kubernetes_client_configuration.ca_certificate
 }
 
 output "talos_config_instructions" {
