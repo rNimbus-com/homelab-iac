@@ -1,7 +1,12 @@
 # Variables for Proxmox provider configuration
 variable "pve_endpoint" {
   type        = string
-  description = "The Proxmox VE API endpoint URL"
+  description = "The Proxmox VE API endpoint URL. Usually a single node."
+}
+
+variable "pve_cluster_endpoint" {
+  type        = string
+  description = "The Cluster Proxmox VE API endpoint URL."
 }
 
 variable "terraform_state_path" {
@@ -45,6 +50,7 @@ variable "talos_cluster" {
   type = object({
     cluster_name              = string
     cluster_endpoint          = string
+    region                    = string
     control_plane_vm_id       = optional(number, null)
     dns_domain_suffix         = optional(string, null)
     machine_install_image     = optional(string, null)
@@ -58,6 +64,10 @@ variable "talos_cluster" {
     control_plane_patches     = optional(list(string), [])
     talos_ccm_enabled         = optional(bool, true)
     talos_ccm_manifest        = optional(string, ".env/manifests/talos-ccm-manifest.yml")
+    proxmox_ccm_enabled       = optional(bool, true)
+    proxmox_ccm_manifest      = optional(string, ".env/manifests/proxmox-ccm-manifest.yml")
+    proxmox_csi_enabled       = optional(bool, true)
+    proxmox_csi_manifest      = optional(string, ".env/manifests/proxmox-csi-manifest.yml")
     cilium_enabled            = optional(bool, false)
     cilium_version            = optional(string, "v1.4.0")
     cilium_manifest_file      = optional(string, ".env/manifests/cilium-manifest.yml")
@@ -75,6 +85,7 @@ Talos cluster configuration settings.
 
 - cluster_name: The name of the Kubernetes cluster
 - cluster_endpoint: The kubernetes API endpoint of the cluster. For multiple control plane VMs, this is the DNS A record assigned for each VM, or the load balancer if you have one. Example: `https://cluster.local.example.com:6443`
+- region: Region designator for the cluster. Added as metadata to the VM and used to create labels for Nodes.
 - control_plane_vm_id: The control plane Virtual Machine's vm_id to reference for ip configuration. If not set, uses the first control plane VM.
 - dns_domain_suffix: The domain suffix to append to the Virtual Machine names prior to adding them to the certSANS lists. Starts with a '.'. If not set, then the VM names are added as is. (Example: `.local.example.com`).
 - machine_install_image: The Talos machine installation image to use. Uses the default configure image if not set. Needed for secureboot.
@@ -88,6 +99,10 @@ Talos cluster configuration settings.
 - control_plane_patches: List of custom patch filenames to apply to control plane nodes.
 - talos_ccm_enabled: Enables installation of the node-csr-approval controller from the [Talos Cloud Controller Manager](https://github.com/siderolabs/talos-cloud-controller-manager/blob/main/README.md). Enables certificate renewal for your nodes. Required for metrics server. 
 - talos_ccm_manifest: Location of the manifest generated with the helm template command. Defaults to the name and directory location the `./manifest-generators/template-tccm.sh` script writes to.
+- proxmox_ccm_enabled: Enables installation of the cloud controller manager from [Proxmox Cloud Controller Manager](https://github.com/sergelogvinov/proxmox-cloud-controller-manager/blob/main/docs/install.md).
+- proxmox_ccm_manifest: Location of the manifest generated with the helm template command. Defaults to the name and directory location the `./manifest-generators/template-pccm.sh` script writes to.
+- proxmox_csi_enabled: Enables installation of the [Proxmox CSI Plugin](https://github.com/sergelogvinov/proxmox-csi-plugin/blob/main/charts/proxmox-csi-plugin/README.md).
+- proxmox_csi_manifest: Location of the manifest generated with the helm template command. Defaults to the name and directory location the `./manifest-generators/template-csi.sh` script writes to.
 - cilium_enabled: Enables the replacement of the default flannel cni with cilium.
 - cilium_version: Cilium version. Defaults to v1.4.0.
 - cilium_manifest_file: The location of the cilium manifest generated with the helm template command. Defaults to the name and directory location the `./manifest-generators/template-cilium.sh` script writes to.

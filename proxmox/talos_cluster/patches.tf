@@ -56,14 +56,55 @@ locals {
     EOT
   ]
 
-  # Patch for Talos CCM
-  talos_ccm_patch = var.talos_cluster.talos_ccm_enabled == false ? [] : [
+  # Patches for Proxmox CCM
+  proxmox_providerid_patches = var.talos_cluster.talos_ccm_enabled == false ? {} : {
+    for id, vm in local.all_vms_map : id =>
+    <<-EOT
+      machine:
+        kubelet:
+          extraArgs:
+            provider-id: proxmox://${var.talos_cluster.region}/${id}
+      EOT
+  }
+  proxmox_ccm_secrets_patch = var.talos_cluster.proxmox_ccm_enabled == false ? [] : [
+    <<-EOT
+      cluster:
+        inlineManifests:
+          - name: proxmox-ccm-user-token
+            contents: |
+              ${indent(8, local.proxmox_ccm_secret)}
+    EOT
+  ]
+  proxmox_ccm_patch = var.talos_cluster.proxmox_ccm_enabled == false ? [] : [
+    <<-EOT
+      cluster:
+        inlineManifests:
+          - name: proxmox-cloud-controller-manager
+            contents: |
+              ${indent(8, file(var.talos_cluster.proxmox_ccm_manifest))}
+    EOT
+  ]
+  # Patches for Talos CCM
+  talos_ccm_all_patch = var.talos_cluster.talos_ccm_enabled == false ? [] : [
     <<-EOT
       machine:
         kubelet:
           extraArgs:
             rotate-server-certificates: true
             cloud-provider: external
+          extraConfig:
+            imageGCHighThresholdPercent: 70
+            imageGCLowThresholdPercent: 50
+            shutdownGracePeriod: 60s
+            topologyManagerPolicy: best-effort
+            topologyManagerScope: container
+            cpuManagerPolicy: static
+            allowedUnsafeSysctls: [net.core.somaxconn]
+    EOT
+  ]
+  talos_ccm_cp_patch = var.talos_cluster.talos_ccm_enabled == false ? [] : [
+    <<-EOT
+      machine:
         features:
           kubernetesTalosAPIAccess:
             enabled: true
@@ -76,6 +117,26 @@ locals {
           - name: talos-cloud-controller-manager
             contents: |
               ${indent(8, file(var.talos_cluster.talos_ccm_manifest))}
+    EOT
+  ]
+  # Patches for Proxmox CSI Plugin
+  proxmox_csi_secrets_patch = var.talos_cluster.proxmox_csi_enabled == false ? [] : [
+    <<-EOT
+      cluster:
+        inlineManifests:
+          - name: proxmox-csi-user-token
+            contents: |
+              ${indent(8, local.proxmox_csi_secret)}
+    EOT
+  ]
+
+  proxmox_csi_patch = var.talos_cluster.proxmox_csi_enabled == false ? [] : [
+    <<-EOT
+      cluster:
+        inlineManifests:
+          - name: proxmox-csi-plugin
+            contents: |
+              ${indent(8, file(var.talos_cluster.proxmox_csi_manifest))}
     EOT
   ]
 
@@ -94,11 +155,19 @@ locals {
 
   # Merge control pane patches into a single list.
   control_plane_patches = concat(
-    local.talos_ccm_patch,
+    local.proxmox_ccm_secrets_patch,
+    local.proxmox_ccm_patch,
+    local.talos_ccm_all_patch,
+    local.talos_ccm_cp_patch,
     local.cilium_pre_patch,
     local.cilium_patch,
     local.cilium_ip_annoucement,
+    local.proxmox_csi_secrets_patch,
+    local.proxmox_csi_patch,
     local.argocd_patch,
     local.custom_control_plane_patches
+  )
+  worker_patches = concat(
+    local.talos_ccm_all_patch
   )
 }
