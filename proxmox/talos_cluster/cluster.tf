@@ -168,6 +168,7 @@ resource "talos_machine_configuration_apply" "control_plane" {
       }
       })
     ],
+    [local.proxmox_providerid_patches[each.key]],
     local.control_plane_patches
   )
   depends_on = [
@@ -191,7 +192,7 @@ resource "talos_machine_configuration_apply" "worker" {
   # Otherwise terraform / tofu will timeout, as the endpoint on the worker is no longer available after it joins the cluster
   endpoint = contains(var.joined_worker_ids, tonumber(each.key)) ? local.cluster_node_endpoint : local.nodes_host_ip[each.key]
   node     = local.nodes_host_ip[each.key]
-  config_patches = [
+  config_patches = concat([
     yamlencode({
       machine = {
         install = {
@@ -205,13 +206,15 @@ resource "talos_machine_configuration_apply" "worker" {
           # For https://github.com/siderolabs/talos-cloud-controller-manager
           extraArgs = var.talos_cluster.talos_ccm_enabled == false ? {} : {
             rotate-server-certificates = true
-            # cloud-provider = "external"
+            cloud-provider             = "external"
           }
         }
         certSANs = local.machine_cert_sans
       }
-    })
-  ]
+    })]
+    , [local.proxmox_providerid_patches[each.key]]
+    , local.worker_patches
+  )
   depends_on = [
     module.worker_vms, talos_machine_configuration_apply.control_plane, talos_machine_bootstrap.this
   ]

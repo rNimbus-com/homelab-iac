@@ -5,9 +5,28 @@ data "proxmox_virtual_environment_file" "iso" {
   file_name    = var.iso_file_name
 }
 
+resource "proxmox_virtual_environment_file" "nodes_metadata" {
+  for_each     = local.all_vms_map
+  node_name    = each.value.node_name
+  content_type = "snippets"
+  datastore_id = var.iso_datastore_id
+
+  source_raw {
+    data = yamlencode({
+      hostname   = each.value.vm_name
+      id         = each.key
+      providerID = "proxmox://${var.talos_cluster.region}/${each.key}"
+      type       = "${each.value.cpu_cores}VCPU-${floor(each.value.memory_mb / 1024)}GB"
+      zone       = each.value.node_name
+      region     = var.talos_cluster.region
+    })
+    file_name = "${each.key}.metadata.yaml"
+  }
+}
+
 module "control_plane_vms" {
-  for_each    = { for vm in var.control_plane_vms : vm.vm_id => vm }
-  source      = "github.com/rNimbus-com/homelab-iac/proxmox/modules/proxmox_virtual_machine?ref=v0"
+  for_each = { for vm in var.control_plane_vms : vm.vm_id => vm }
+  source   = "github.com/rNimbus-com/homelab-iac/proxmox/modules/proxmox_virtual_machine?ref=v0"
   # source      = "../../proxmox/modules/proxmox_virtual_machine"
   vm_name     = each.value.vm_name
   vm_id       = each.value.vm_id
@@ -70,9 +89,10 @@ module "control_plane_vms" {
   hostpci = each.value.hostpci
 
   cloud_init = {
-    datastore_id = "local-cluster-zfs"
-    interface    = "scsi1"
-    ip_config    = each.value.cloud_init_ip_config
+    datastore_id      = "local-cluster-zfs"
+    interface         = "scsi1"
+    ip_config         = each.value.cloud_init_ip_config
+    meta_data_file_id = proxmox_virtual_environment_file.nodes_metadata[each.value.vm_id].id
   }
 }
 
@@ -138,8 +158,9 @@ module "worker_vms" {
     }
   ]
   cloud_init = {
-    datastore_id = "local-cluster-zfs"
-    interface    = "scsi1"
-    ip_config    = each.value.cloud_init_ip_config
+    datastore_id      = "local-cluster-zfs"
+    interface         = "scsi1"
+    ip_config         = each.value.cloud_init_ip_config
+    meta_data_file_id = proxmox_virtual_environment_file.nodes_metadata[each.value.vm_id].id
   }
 }

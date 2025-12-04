@@ -117,6 +117,33 @@ roles = [
             "VM.GuestAgent.Audit",
             "Datastore.Audit"
         ]
+    },
+    {
+        role_id = "k8sCCM"
+        privileges = [ 
+            "Sys.Audit",
+            "VM.Audit",
+            "VM.GuestAgent.Audit"
+        ]
+    },
+    {
+        role_id = "k8sCSI"
+        privileges = [ 
+            "Sys.Audit",
+            "VM.Audit",
+            "VM.Allocate", 
+            "VM.Clone",
+            "VM.Config.CPU",
+            "VM.Config.Disk",
+            "VM.Config.HWType",
+            "VM.Config.Memory",
+            "VM.Config.Options",
+            "VM.Migrate",
+            "VM.PowerMgmt",
+            "Datastore.Allocate",
+            "Datastore.AllocateSpace",
+            "Datastore.Audit"
+        ]
     }
 ]
 

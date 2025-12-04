@@ -1,3 +1,5 @@
 !.gitignore
 !argocd-manifest.yml
 !talos-ccm-manifest.yml
+!proxmox-ccm-manifest.yml
+!proxmox-csi-manifest.yml

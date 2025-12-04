@@ -1,5 +1,6 @@
 # Proxmox provider configuration
 pve_endpoint="https://pve-host-01.proxmox.local.example.com:8006"
+pve_cluster_endpoint="https://proxmox.local.example.com"
 terraform_state_path=".terraform/talos_virtual_machines_cluster_example.tfstate"
 
 # Proxmox ISO file configuration
@@ -14,6 +15,7 @@ talos_version = "1.11.3"
 talos_cluster = {
   cluster_name = "example"
   cluster_endpoint = "https://cluster.local.example.com:6443"
+  talos_cluster = "myregion"
   control_plane_vm_id = 101
   dns_domain_suffix = ".cluster.local.example.com"
   machine_install_image = "factory.talos.dev/nocloud-installer-secureboot/aeec243e3a4c2a14f9ba74b1a8c7662f03eea658a7ea5f1c26fdd491280c88f8:v1.11.3"
@@ -26,7 +28,9 @@ talos_cluster = {
   api_cert_sans = ["cluster.local.example.com"]
   cilium_enabled = true
   talos_ccm_enabled = true
-  control_plane_patches = [".env/example.ipam-announce-patch.yml"]
+  proxmox_ccm_enabled = true
+  proxmox_csi_enabled = true
+  control_plane_patches = []
   cilium_ip_pool = {
     start_ip = "192.168.12.130"
     end_ip = "192.168.12.149"
