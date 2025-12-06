@@ -195,7 +195,7 @@ pve_download_files = [
     content_type       = "iso"
     datastore_id       = "local"
     node_name          = "pve-host-01"
-    url                = "https://factory.talos.dev/image/aeec243e3a4c2a14f9ba74b1a8c7662f03eea658a7ea5f1c26fdd491280c88f8/v1.11.3/nocloud-amd64-secureboot.iso"
-    file_name          = "talos-v1.11.3-nocloud-amd64-secureboot.iso"
+    url                = "https://factory.talos.dev/image/aeec243e3a4c2a14f9ba74b1a8c7662f03eea658a7ea5f1c26fdd491280c88f8/v1.11.5/nocloud-amd64-secureboot.iso"
+    file_name          = "talos-v1.11.5-nocloud-amd64-secureboot.iso"
   }
 ]
