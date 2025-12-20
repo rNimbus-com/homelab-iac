@@ -63,7 +63,6 @@ proxmox/talos_cluster/
 ├── patches.tf                 # Patches for Talos configuration
 ├── .env/
 │   ├── example.tfvars         # Example configuration
-│   ├── rnimbus.tfvars         # Production configuration
 │   └── manifests/             # Generated manifests (git-ignored)
 │       ├── argocd-manifest.yml # Generated ArgoCD manifest
 │       └── talos-ccm-manifest.yml # Generated Talos CCM manifest
