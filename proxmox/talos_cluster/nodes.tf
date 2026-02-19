@@ -50,6 +50,9 @@ module "control_plane_vms" {
     cpu_units = 900
   }
 
+  startup_order = 1
+  next_vm_startup_delay = 60
+
   # Boot from virtio0 disk then CD-ROM
   boot_order = ["virtio0", "ide0"]
   # boot_order = [ "virtio0" ]

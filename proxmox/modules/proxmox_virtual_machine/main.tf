@@ -38,9 +38,9 @@ resource "proxmox_virtual_environment_vm" "this" {
   dynamic "startup" {
     for_each = (var.startup_order != null && var.startup_order > 0) || (var.next_vm_startup_delay != null && var.next_vm_startup_delay > 0) || (var.next_vm_shutdown_delay != null && var.next_vm_shutdown_delay > 0) ? [1] : []
     content {
-      order      = var.startup_order == var.startup_order
-      up_delay   = var.next_vm_startup_delay == var.next_vm_startup_delay
-      down_delay = var.next_vm_shutdown_delay == var.next_vm_shutdown_delay
+      order      = var.startup_order
+      up_delay   = var.next_vm_startup_delay
+      down_delay = var.next_vm_shutdown_delay
     }
   }
   # startup {
