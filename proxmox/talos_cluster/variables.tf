@@ -37,7 +37,7 @@ variable "iso_content_type" {
 variable "iso_file_name" {
   type        = string
   description = "The name of the ISO file"
-  default     = "talos-v1.11.5-nocloud-amd64-secureboot.iso"
+  default     = "talos-v1.12.4-nocloud-amd64-secureboot.iso"
 }
 
 variable "talos_version" {
